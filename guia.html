@@ -172,14 +172,12 @@
 
         <form id="formulario">
             <div class="form-section">
-
                 <div class="section-title">PROCEDENCIA                                        DESTINO</div>
                 <div class="form-row">
                     <input type="text" placeholder="Procedencia" required>
                     <input type="text" placeholder="Destino" required>
                 </div>
             </div>
-
 
             <div class="form-section">
                 <div class="section-title">ENCARGADO DE ENVÍO</div>
@@ -246,6 +244,7 @@
         <button class="btn" id="downloadBtn">Descargar PDF</button>
         <button class="btn" onclick="window.location.href='index.html'">Regresar al Menú</button>
     </div>
+
     <script>
         document.getElementById('downloadBtn').addEventListener('click', async () => {
             const { jsPDF } = window.jspdf;
@@ -255,59 +254,39 @@
                 format: 'a4'
             });
     
-            // Capturar solo el logo y el título
             const header = document.querySelector('header');
             const botones = document.querySelectorAll('.btn');
             botones.forEach(boton => boton.style.display = 'none'); // Ocultar botones
     
             // Captura del encabezado (logo y título)
             await html2canvas(header, {
-                scale: 2, // Mejor calidad
+                scale: 2, 
                 useCORS: true
             }).then(canvas => {
                 const imgData = canvas.toDataURL('image/png');
                 const pdfWidth = doc.internal.pageSize.getWidth();
                 const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-                doc.addImage(imgData, 'PNG', 10, 10, pdfWidth - 20, pdfHeight - 25); // Logo más pequeño y centrado
+                doc.addImage(imgData, 'PNG', 10, 10, pdfWidth - 20, pdfHeight - 25);
             });
     
-            // Nueva posición para el contenido restante
-            let yPosition = 55; // Ajusta según el tamaño de tu encabezado
+            let yPosition = 55; // Ajuste según el tamaño de tu encabezado
     
-            // Capturar el contenido desde "Procedencia" hasta la "Firma"
-            const specificArea = document.querySelector('.container'); // Área que contiene todo el contenido
+            const specificArea = document.querySelector('.container'); 
             await html2canvas(specificArea, {
                 scale: 2,
-                useCORS: true,
-                scrollY: -window.scrollY // Evitar problemas de scroll en la captura
+                useCORS: true
             }).then(canvas => {
-                const croppedCanvas = document.createElement('canvas');
-                const croppedContext = croppedCanvas.getContext('2d');
-    
-                const cropWidth = canvas.width;
-                const cropStartY = canvas.height * 0.1556; // Ajuste desde donde empieza "Procedencia"
-                const cropHeight = canvas.height * 0.82; // Ajustar hasta que termine en "Firma"
-    
-                croppedCanvas.width = cropWidth;
-                croppedCanvas.height = cropHeight;
-    
-                // Recortar el área desde "Procedencia" hasta "Firma"
-                croppedContext.drawImage(canvas, 0, cropStartY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
-    
-                const imgData = croppedCanvas.toDataURL('image/png');
+                const imgData = canvas.toDataURL('image/png');
                 const pdfWidth = doc.internal.pageSize.getWidth();
-                const pdfHeight = (croppedCanvas.height * pdfWidth) / croppedCanvas.width;
-    
-                // Imagen centrada y más pequeña
-                doc.addImage(imgData, 'PNG', 15, yPosition, pdfWidth - 35, pdfHeight-140); 
+                const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+                doc.addImage(imgData, 'PNG', 10, yPosition, pdfWidth - 20, pdfHeight);
             });
     
-            botones.forEach(boton => boton.style.display = 'inline-block'); // Mostrar botones nuevamente
+            botones.forEach(boton => boton.style.display = 'inline-block'); // Restaurar botones
     
-            doc.save('Guía_TransCano.pdf');
+            doc.save('guia_envio.pdf');
         });
     </script>
-    
 
 </body>
 
