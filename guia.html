@@ -239,7 +239,6 @@
             <span>Luis Cano</span>
         </div>
     </div>
-
     <div class="actions">
         <button class="btn" id="downloadBtn">Descargar PDF</button>
         <button class="btn" onclick="window.location.href='index.html'">Regresar al Menú</button>
@@ -276,10 +275,23 @@
                 scale: 2,
                 useCORS: true
             }).then(canvas => {
+               const croppedCanvas = document.createElement('canvas');
+                const croppedContext = croppedCanvas.getContext('2d');
+    
+                const cropWidth = canvas.width;
+                const cropStartY = canvas.height * 0.1556; // Ajuste desde donde empieza "Procedencia"
+                const cropHeight = canvas.height * 0.82; // Ajustar hasta que termine en "Firma"
+    
+                croppedCanvas.width = cropWidth;
+                croppedCanvas.height = cropHeight;
+    
+                // Recortar el área desde "Procedencia" hasta "Firma"
+                croppedContext.drawImage(canvas, 0, cropStartY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
+    
                 const imgData = canvas.toDataURL('image/png');
                 const pdfWidth = doc.internal.pageSize.getWidth();
                 const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-                doc.addImage(imgData, 'PNG', 10, yPosition, pdfWidth - 20, pdfHeight);
+                doc.addImage(imgData, 'PNG', 15, yPosition, pdfWidth - 35, pdfHeight-140);
             });
     
             botones.forEach(boton => boton.style.display = 'inline-block'); // Restaurar botones
